@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "zig build -Dtarget_file=${input:targetFile}",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "targetFile",
+            "type": "promptString",
+            "description": "Enter Zig filename (without .zig)",
+            "default": "main"
+        }
+    ]
+}
