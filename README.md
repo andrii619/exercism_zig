@@ -1,6 +1,9 @@
 # exercism_zig
 Solutions to zig exercises on exercism
 
+TODO:
+
+* add code comments and explanations to each solution
 
 To run a single file:
 
