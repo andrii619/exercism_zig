@@ -1,6 +1,8 @@
 # exercism_zig
 Solutions to zig exercises on exercism
 
+tested version of zig: 0.15.0-dev.889+b8ac740a1
+
 TODO:
 
 * add code comments and explanations to each solution
