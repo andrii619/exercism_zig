@@ -25,6 +25,26 @@ pub fn isAllergicTo(score: u8, allergen: Allergen) bool {
 pub fn initAllergenSet(score: usize) EnumSet(Allergen) {
     var set = EnumSet(Allergen).initEmpty();
 
+    // std.meta.fields return an array of enum fields that is
+    // comptime (only known and valid during compile time)
+    // so this means that a runtime for loop wont work here.
+    // We can't iterate comptime data using a runtime for. And
+    // we can't use a comptime block here either since we are using a
+    // runtime score variable. So we unroll the loop using inline for
+    // the code becomes something like this:
+    //     const allergen = Allergen.eggs;
+    // const bit = @intCast(usize, 0);
+    // if ((score >> bit) & 1 != 0) {
+    //     set.insert(allergen);
+    // }
+
+    // const allergen = Allergen.peanuts;
+    // const bit = @intCast(usize, 1);
+    // if ((score >> bit) & 1 != 0) {
+    //     set.insert(allergen);
+    // }
+    // each loop iteration is expended at compile time
+    // but evaluiated at runtime
     inline for (std.meta.fields(Allergen)) |info| {
         const allergen = info.value;
         const bit: usize = @intCast(allergen);
@@ -35,6 +55,30 @@ pub fn initAllergenSet(score: usize) EnumSet(Allergen) {
     }
 
     return set;
+}
+
+pub fn initAllergenSet2(score: usize) EnumSet(Allergen) {
+    var allergens = EnumSet(Allergen).initFull();
+    var allergenIter = allergens.iterator();
+    while (allergenIter.next()) |allergen| {
+        const isAllergic = isAllergicTo(score, allergen);
+        allergens.setPresent(allergen, isAllergic);
+    }
+    return allergens;
+}
+
+pub fn initAllergenSet3(score: u9) EnumSet(Allergen) {
+    var allergen_set: EnumSet(Allergen) = .{};
+    inline for (@typeInfo(Allergen).Enum.fields) |field|
+        if (isAllergicTo(score, @enumFromInt(field.value)))
+            allergen_set.insert(@enumFromInt(field.value));
+    return allergen_set;
+}
+
+pub fn initAllergenSet4(score: usize) EnumSet(Allergen) {
+    var allergenSet = EnumSet(Allergen).initEmpty();
+    allergenSet.bits.mask = @truncate(score);
+    return allergenSet;
 }
 
 test "eggs: not allergic to anything" {
