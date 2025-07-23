@@ -4,7 +4,7 @@ const testing = std.testing;
 
 const triangle = @This();
 
-const TriangleError = error{Invalid};
+pub const TriangleError = error{Invalid};
 
 pub const Triangle = struct {
     // This struct, as well as its fields and methods, needs to be implemented.
