@@ -6,12 +6,18 @@ pub fn build(b: *std.Build) void {
         std.process.exit(1);
     };
     // const echo = b.addExecutable(.{ .name = "echo", .root_source_file = b.path("./echo/echo.zig"), .target = target, .optimize = optimize });
-    const exe = b.addExecutable(.{
-        // .name = target_file,
-        .name = "out",
+
+    const mod = std.Build.createModule(b, .{
         .root_source_file = b.path(target_file),
         .target = b.standardTargetOptions(.{}),
         .optimize = b.standardOptimizeOption(.{}),
+    });
+
+    const exe = b.addExecutable(.{
+        // .name = target_file,
+        .name = "out",
+        .root_module = mod,
+        // .root_source_file = b.path(target_file),
     });
 
     b.installArtifact(exe);
